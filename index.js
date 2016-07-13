@@ -1,8 +1,11 @@
 const Bot = require('node-telegram-bot-api');
 const r = require('superagent');
+const bopomo = require("tobopomo.js");
 const token = '***REMOVED***';
 
 const bot = new Bot(token, {polling: true});
+
+const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
 
 const toBopomo = (fromId, message) => {
     try {
@@ -11,7 +14,7 @@ const toBopomo = (fromId, message) => {
         // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
         .query({
-            text: message.replace(/ /g, '=') + '=',
+            text: gInputPrefix(message),
             itc: 'zh-hant-t-i0-und',
             num: 13,
             cp: 0,
@@ -24,7 +27,7 @@ const toBopomo = (fromId, message) => {
             if (res.ok) {
                 let zhuyin = JSON.parse(res.text)[1][0][1][0];
                 if (zhuyin === undefined)
-                    zhuyin = message;
+                    zhuyin = tobopomo(message).tokanji().join('');
                 console.log(zhuyin);
                 bot.sendMessage(fromId, zhuyin);
             }
