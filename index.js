@@ -31,7 +31,6 @@ const toBopomo = (fromId, message) => {
         });
     } catch (e) {
         console.log(e);
-        console.log(msg);
     }
 }
 
@@ -39,13 +38,17 @@ bot.on('message', msg => toBopomo(msg.chat.id, msg.text));
 bot.on('inline_query', msg => {
     const input = msg.query;
     const queryId = msg.id;
-
-    const response = {
-        id: 'res',
-        type: 'article',
-        parse_mode: 'markdown',
-        title: input,
-        message_text: input
-    };
-    bot.answerInlineQuery(queryId, [response]);
+    try {
+        if (!input) throw new Error('No Message!');
+        const response = {
+            id: 'res',
+            type: 'article',
+            parse_mode: 'markdown',
+            title: input,
+            message_text: input
+        };
+        bot.answerInlineQuery(queryId, [response]);
+    } catch (e) {
+        console.log(`Id ${msg.from.id} start inline query.`);
+    }
 });
