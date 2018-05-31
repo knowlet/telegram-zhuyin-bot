@@ -6,6 +6,7 @@ const bot = new Bot(token, { polling: true });
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
 const regexUrl = /https?:\/\/?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.%]+$/;
+const initials = [' ', '6', '3', '4', '7'];
 
 const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]) => {
     console.log(`From: ${fromId} Message: ${message}`);
@@ -14,9 +15,11 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
         if (regexUrl.test(message)) throw new Error('Do not parse URL.');
         // regex is faster in short and long mismatch cases
         if (/^(\w)\1+$/i.test(match)) throw new Error('Do not parse suffix.');
+        // valid vocab
+        if (match.trim().split('').every(T => !~initials.indexOf(T))) throw new Error('Do not parse vocab.')
         /* use this check than u can't type ㄏㄏ or ㄎㄎ
         // should ends with initials
-        if (!~[' ', '6', '3', '4', '7'].indexOf(message.slice(-1))) {
+        if (!~initials.indexOf(message.slice(-1))) {
             // because the white space was trimed so we need to determine the consonants
             if (!!~['1', 'q', 'a', 'z', '2', 'w', 's', 'x', 'e', 'd', 'c', 'r', 'f', 'v', 'b']
                     .indexOf(message.toLowerCase().slice(-1)))
