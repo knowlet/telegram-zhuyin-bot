@@ -30,7 +30,13 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
         .on('error', err => console.log(`ERROR! ${err}`))
         .end((err, res) => {
             if (res.ok) {
-                let zhuyin = JSON.parse(res.text)[1][0][1][0];
+                let zhuyin = undefined;
+                try {
+                    zhuyin = JSON.parse(res.text)[1][0][1][0];
+                } catch (e) {
+                    console.log(e.message)
+                    console.log(res.text)
+                }
                 let kanji = '';
                 try {
                     kanji = tobopomo(message).tokanji().map(b => b[0]).join``;
