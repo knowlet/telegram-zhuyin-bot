@@ -14,6 +14,15 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
         if (regexUrl.test(message)) throw new Error('Do not parse URL.');
         // regex is faster in short and long mismatch cases
         if (/^(\w)\1+$/i.test(match)) throw new Error('Do not parse suffix.');
+        /* use this check than u can't type ㄏㄏ or ㄎㄎ
+        // should ends with initials
+        if (!~[' ', '6', '3', '4', '7'].indexOf(message.slice(-1))) {
+            // because the white space was trimed so we need to determine the consonants
+            if (!!~['1', 'q', 'a', 'z', '2', 'w', 's', 'x', 'e', 'd', 'c', 'r', 'f', 'v', 'b']
+                    .indexOf(message.toLowerCase().slice(-1)))
+                throw new Error('Do not parse invalid input.');
+        }
+        */
         message = message.charAt(0) === '/' ? message.slice(1) : message;
         // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
