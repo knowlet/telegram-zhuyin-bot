@@ -6,9 +6,11 @@ const bot = new Bot(token, {polling: true});
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
 
-const toBopomo = (fromId, message) => {
+const toBopomo = (fromId, message, message_id) => {
     try {
         if (!message) throw new Error('No Message!');
+        message = message.charAt(0) === '/' ? message.slice(1) : message;
+        message += ' ';
         console.log(`From: ${fromId} Message: ${message}`);
         // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
@@ -42,29 +44,14 @@ const toBopomo = (fromId, message) => {
                 else {
                     zhuyin = zhuyin.length >= kanji.length ? zhuyin : kanji
                 }
-                bot.sendMessage(fromId, zhuyin);
+                if (!!zhuyin)
+                    bot.sendMessage(fromId, `你是指：${zhuyin}`, { reply_to_message_id: message_id });
             }
         });
     } catch (e) {
-        console.log(e);
+        console.log(e.message);
     }
 };
 
-bot.on('message', msg => toBopomo(msg.chat.id, msg.text));
-bot.on('inline_query', msg => {
-    const input = msg.query;
-    const queryId = msg.id;
-    try {
-        if (!input) throw new Error('No Message!');
-        const response = {
-            id: 'res',
-            type: 'article',
-            parse_mode: 'markdown',
-            title: input,
-            message_text: input
-        };
-        bot.answerInlineQuery(queryId, [response]);
-    } catch (e) {
-        console.log(`Id ${msg.from.id} start inline query.`);
-    }
-});
+// bot.on('message', msg => toBopomo(msg.chat.id, msg.text, msg.message_id));
+bot.onText(/[\w\s\.\/\;\-\,]+$/, msg => toBopomo(msg.chat.id, msg.text, msg.message_id));
