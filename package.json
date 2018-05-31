@@ -9,8 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "node-telegram-bot-api": "^0.23.3",
-    "superagent": "^2.0.0",
-    "tobopomo.js": "^1.1.0"
+    "node-telegram-bot-api": "^0.30.0",
+    "superagent": "^2.3.0",
+    "tobopomo.js": "^1.1.3"
   }
 }
