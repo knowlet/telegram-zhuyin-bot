@@ -73,4 +73,4 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
 };
 
 // bot.on('message', msg => toBopomo(msg.chat.id, msg.text, msg.message_id));
-bot.onText(/[\w\s\.\/\;\-\,]+$/, (msg, match) => toBopomo(msg, match));
+bot.onText(/[a-z0-9\s\.\/\;\-\,]+$/, (msg, match) => toBopomo(msg, match));
