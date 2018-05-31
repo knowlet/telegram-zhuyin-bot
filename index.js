@@ -5,10 +5,12 @@ const {token} = require('./config.js');
 const bot = new Bot(token, {polling: true});
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
+const regexUrl = /https?:\/\/?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.%]+$/;
 
 const toBopomo = (fromId, message, message_id) => {
     try {
         if (!message) throw new Error('No Message!');
+        if (regexUrl.test(message)) throw new Error('Do not parse URL.');
         message = message.charAt(0) === '/' ? message.slice(1) : message;
         message += ' ';
         console.log(`From: ${fromId} Message: ${message}`);
