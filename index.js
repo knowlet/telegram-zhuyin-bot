@@ -1,19 +1,21 @@
 const Bot = require('node-telegram-bot-api');
 const r = require('superagent');
 const bopomo = require('tobopomo.js');
-const {token} = require('./config.js');
-const bot = new Bot(token, {polling: true});
+const { token } = require('./config.js');
+const bot = new Bot(token, { polling: true });
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
 const regexUrl = /https?:\/\/?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.%]+$/;
 
-const toBopomo = (fromId, message, message_id) => {
+const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]) => {
+    console.log(`From: ${fromId} Message: ${message}`);
     try {
         if (!message) throw new Error('No Message!');
         if (regexUrl.test(message)) throw new Error('Do not parse URL.');
+        // faster than /^(\w)\1+$/i.test(match);
+        if (match.toLowerCase() === match.toLowerCase().charAt(0).repeat(match.length)) throw new Error('Do not parse suffix.');
         message = message.charAt(0) === '/' ? message.slice(1) : message;
         message += ' ';
-        console.log(`From: ${fromId} Message: ${message}`);
         // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
         .query({
@@ -56,4 +58,4 @@ const toBopomo = (fromId, message, message_id) => {
 };
 
 // bot.on('message', msg => toBopomo(msg.chat.id, msg.text, msg.message_id));
-bot.onText(/[\w\s\.\/\;\-\,]+$/, msg => toBopomo(msg.chat.id, msg.text, msg.message_id));
+bot.onText(/[\w\s\.\/\;\-\,]+$/, (msg, match) => toBopomo(msg, match));
