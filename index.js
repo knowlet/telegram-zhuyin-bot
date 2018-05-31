@@ -1,7 +1,10 @@
 const Bot = require('node-telegram-bot-api');
 const r = require('superagent');
 const bopomo = require('tobopomo.js');
-const { token } = require('./config.js');
+let token = process.env.TG_TOKEN;
+try {
+    token = require('./config.js').token;
+} catch (error) {}
 const bot = new Bot(token, { polling: true });
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));

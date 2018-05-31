@@ -1,0 +1,6 @@
+{
+  "name": "Zhuyin to Hant Bot",
+  "description": "Telegram bot that provides to translate english zhuyin to Hant",
+  "repository": "https://github.com/knowlet/telegram-zhuyin-bot",
+  "keywords": ["nodejs", "bot", "telegram-bot", "telegram", "javascript", "node-js", "heroku", "zhuyin", "google-api", "translation", "hant", "bopomo"]
+}
