@@ -50,7 +50,7 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 }
                 let kanji = '';
                 try {
-                    kanji = tobopomo(message).tokanji().map(b => b[0]).join``;
+                    kanji = tobopomo(message + ' ').tokanji().map(b => b[0]).join``;
                 } catch (e) {
                     console.error(e)
                     kanji = '';
