@@ -12,10 +12,9 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
     try {
         if (!message) throw new Error('No Message!');
         if (regexUrl.test(message)) throw new Error('Do not parse URL.');
-        // faster than /^(\w)\1+$/i.test(match);
-        if (match.toLowerCase() === match.toLowerCase().charAt(0).repeat(match.length)) throw new Error('Do not parse suffix.');
+        // regex is faster in short and long mismatch cases
+        if (/^(\w)\1+$/i.test(match)) throw new Error('Do not parse suffix.');
         message = message.charAt(0) === '/' ? message.slice(1) : message;
-        message += ' ';
         // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
         .query({
@@ -27,7 +26,7 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
             ie: 'utf-8',
             oe: 'utf-8'
         })
-        .on('error', err => console.log(`ERROR! ${err}`))
+        .on('error', err => console.log(`ERROR! ${err.message}`))
         .end((err, res) => {
             if (res.ok) {
                 let zhuyin = undefined;
@@ -54,6 +53,7 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 else {
                     zhuyin = zhuyin.length >= kanji.length ? zhuyin : kanji
                 }
+                if (message.length === zhuyin.length + match.length) { console.log('Translate failed.'); return; }
                 if (!!zhuyin)
                     bot.sendMessage(fromId, `你是指：${zhuyin}`, { reply_to_message_id: message_id });
             }
