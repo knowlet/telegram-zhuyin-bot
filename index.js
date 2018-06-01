@@ -29,11 +29,9 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 throw new Error('Do not parse invalid input.');
         }
         */
-        message = message.charAt(0) === '/' ? message.slice(1) : message;
-        // https://inputtools.google.com/request?text=%7C%E4%BD%A0%E5%A5%BD%2C%3B%3D&itc=zh-hant-t-i0-und&num=13&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage
         r.get('https://inputtools.google.com/request')
         .query({
-            text: gInputPrefix(message),
+            text: gInputPrefix(match),
             itc: 'zh-hant-t-i0-und',
             num: 13,
             cp: 0,
@@ -53,7 +51,7 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 }
                 let kanji = '';
                 try {
-                    kanji = tobopomo(message + ' ').tokanji().map(b => b[0]).join``;
+                    kanji = tobopomo(match + ' ').tokanji().map(b => b[0]).join``;
                 } catch (e) {
                     console.error(e)
                     kanji = '';
@@ -68,9 +66,9 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 else {
                     zhuyin = zhuyin.length >= kanji.length ? zhuyin : kanji
                 }
-                if (message.length === zhuyin.length + match.length) { console.log('Translate failed.'); return; }
+                if (zhuyin.length === match.length) { console.log('Translate failed.'); return; }
                 if (!!zhuyin)
-                    bot.sendMessage(fromId, `你是指：${zhuyin}`, { reply_to_message_id: message_id });
+                    bot.sendMessage(fromId, `你是指：${message.replace(match, zhuyin)}`, { reply_to_message_id: message_id });
             }
         });
     } catch (e) {
