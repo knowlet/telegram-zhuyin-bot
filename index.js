@@ -14,21 +14,21 @@ const initials = [' ', '6', '3', '4', '7'];
 const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]) => {
     console.log(`From: ${fromId} Message: ${message}`);
     try {
-        if (!message) throw new Error('No Message!');
-        if (regexUrl.test(message)) throw new Error('Do not parse URL.');
+        if (!match.trim()) throw new Error('No Message!');
+        if (regexUrl.test(match)) throw new Error('Do not parse URL.');
         // regex is faster in short and long mismatch cases
         if (/^(\w)\1+$/i.test(match)) throw new Error('Do not parse suffix.');
         // valid vocab
         if (match.trim().split('').every(T => !~initials.indexOf(T))) throw new Error('Do not parse vocab.')
-        /* use this check than u can't type ㄏㄏ or ㄎㄎ
         // should ends with initials
-        if (!~initials.indexOf(message.slice(-1))) {
+        if (!~initials.indexOf(match.slice(-1))) {
             // because the white space was trimed so we need to determine the consonants
             if (!!~['1', 'q', 'a', 'z', '2', 'w', 's', 'x', 'e', 'd', 'c', 'r', 'f', 'v', 'b']
-                    .indexOf(message.toLowerCase().slice(-1)))
-                throw new Error('Do not parse invalid input.');
+                    .indexOf(match.toLowerCase().slice(-1)))
+                // but reserved the bopomo feature
+                if (!~initials.indexOf(match.slice(-2, -1)))
+                    throw new Error('Do not parse invalid input.');
         }
-        */
         r.get('https://inputtools.google.com/request')
         .query({
             text: gInputPrefix(match),
@@ -68,7 +68,7 @@ const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]
                 }
                 if (zhuyin.length === match.length) { console.log('Translate failed.'); return; }
                 if (!!zhuyin)
-                    bot.sendMessage(fromId, `你是指：${message.replace(match, zhuyin)}`, { reply_to_message_id: message_id });
+                    bot.sendMessage(fromId, `你是指：${message.replace(match.trim(), zhuyin)}`, { reply_to_message_id: message_id });
             }
         });
     } catch (e) {
