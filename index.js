@@ -9,7 +9,7 @@ const bot = new Bot(token, { polling: true });
 
 const gInputPrefix = message => (message.replace(/ /g, '=') + '=').replace(/,/g, encodeURIComponent(','));
 const regexUrl = /https?:\/\/?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.%]+$/;
-const regexBopomo = /(([1qaz2wsxedcrfvb]|[5tgyhn])?[ujm8ik\,9ol\.0p;\/\-]{0,2}[\s6347])+/g;
+const regexBopomo = /(([1qaz2wsxedcrfvb]|[5tgyhn])?[ujm8ik\,9ol\.0p;\/\-]{0,2}[\s6347]){2,}/g;
 const initials = [' ', '6', '3', '4', '7'];
 
 const toBopomo = ({ chat: { id: fromId }, text: message, message_id }, [ match ]) => {
